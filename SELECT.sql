@@ -1,8 +1,9 @@
 -- Задание 2
 
 -- Запрос вывода названия и продолжительности самого длительного трека.
-SELECT MAX(title_track)
-FROM track;
+select title_track, duration
+from track
+where duration = (select max(duration) from track);
 
 -- Запрос вывода названия треков, продолжительность которых не менее 3,5 минут.
 SELECT title_track
@@ -41,19 +42,19 @@ JOIN albom a ON a.albom_id = t.albom_id
 GROUP BY a.title_albom;
 
 -- Запрос вывода всех исполнителей, которые не выпустили альбомы в 2020 году.
-SELECT name FROM executere e
-JOIN albomexecutere al ON e.executere_id = al.executere_id
-JOIN albom a on a.albom_id = al.albom_id 
-WHERE year NOT BETWEEN '2020' AND '2020'
-GROUP BY name;
+select e.name from executere e
+WHERE NOT EXISTS (select FROM albomexecutere al 
+JOIN albom a ON al.albom_id = a.albom_id
+WHERE al.executere_id = e.executere_id
+AND a.year = 2020);
 
 -- Запрос вывода названий сборников, в которых присутствует конкретный исполнитель (выберите его сами).
-SELECT title_mix FROM mix m 
+SELECT distinct title_mix FROM mix m 
 JOIN trackmix tm ON m.mix_id = tm.mix_id
 JOIN track t ON tm.track_id = t.track_id 
 JOIN albom a ON t.albom_id  = a.albom_id 
 JOIN albomexecutere al ON a.albom_id = al.albom_id  
 JOIN executere e ON al.executere_id = e.executere_id 
-WHERE name = 'Анна'
-GROUP BY title_mix; 
+WHERE name = 'Олег';
+ 
 
